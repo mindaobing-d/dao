@@ -4,10 +4,11 @@ const static = require('koa-static');
 const path = require('path');
 const bodyparser = require('koa-bodyparser');
 const router = require('koa-router')();
-const query = require('./db/quer')
+const query = require("./midd/query")
 const router = require("./router")
 app.use(static(path.join(process.cwd(),'public')));
 app.use(bodyparser());
+app.use(query())
 app.use(router.routes());
 app.use(router.allowedMethods());
 
