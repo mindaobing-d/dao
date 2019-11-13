@@ -1,44 +1,24 @@
 const Koa = require('koa');
 const app = new Koa();
-
-//1.处理静态资源
 const static = require('koa-static');
-
 const path = require('path');
-
-//2.处理post请求传递的参数
-
 const bodyparser = require('koa-bodyparser');
-
-//3.路由 写接口
-
 const router = require('koa-router')();
-
 const query = require('./db/quer')
-
 app.use(static(path.join(process.cwd(),'public')));
-
-//静态资源和接口
-app.use(bodyparser());  //ctx.request.body
-
+app.use(bodyparser());
 app.use(router.routes());
-
 app.use(router.allowedMethods());
-
-//查
 router.get('/api/list',async ctx => {
     let data = await query('select * from lists');
     let time = new Date();
     console.log(time)
     ctx.body = data;
 })
-
 //增
 router.post('/api/add',async ctx => {
     let {name,bool} = ctx.request.body;
-    if(name&&bool){  //容错处理
-        //1.查询此人是否存在？
-            //2.不存在
+    if(name&&bool){
             let time = new Date();
             console.log(time)
             let data = await query('insert into lists (name,bool,time) values (?,?)',[name,bool,time]);
@@ -61,9 +41,7 @@ router.post('/api/add',async ctx => {
     }
    
 })
-
 //删除
-
 router.get('/api/del',async ctx => {
     let {id} = ctx.query;
     if(id || id === 0){
@@ -86,12 +64,9 @@ router.get('/api/del',async ctx => {
         }
     }
 })
-
 //修改  
-
 router.post('/api/edit',async ctx => {
     let {name} = ctx.request.body;
-
     if(name){
         try{
             await query('update lists set name=? where name=?',[name])
@@ -114,9 +89,8 @@ router.post('/api/edit',async ctx => {
 })
 
 router.get('/api/search',async ctx => {
-    let {name} = ctx.query;   //key 搜索关键词
+    let {name} = ctx.query;  
     let sql = '';
-    //1.如果没有传
     if(!name){
         sql = 'select * from lists';
     }else{
